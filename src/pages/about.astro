@@ -1,0 +1,17 @@
+---
+import { getCollection } from 'astro:content';
+import SlugPage from './posts/[...slug].astro';
+
+// 1️⃣ 拿所有文章
+const posts = await getCollection('posts');
+
+// 2️⃣ 找到“关于我”
+const entry = posts.find(p => p.id === '关于我');
+
+if (!entry) {
+  throw new Error('关于我不存在');
+}
+---
+
+<!-- 3️⃣ 直接把 entry 传进去 -->
+<SlugPage entry={entry} />

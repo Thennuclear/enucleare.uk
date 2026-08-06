@@ -1,0 +1,8 @@
+{
+	"type": "Live2D Model Setting",
+	"name": "Yuri",
+	"model": "Yuri.moc",
+	"textures": [
+		"textures/texture_00.png"
+	]
+}

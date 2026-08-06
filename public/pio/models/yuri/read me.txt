@@ -1,0 +1,16 @@
+live2D模型化处理+facerig调试 by 猫粮君
+
+说明：
+将文件夹放到以下文件夹中
+steam\SteamApps\common\FaceRig\Mod\VP\PC_CustomData\Objects
+
+按键动作效果：
+Q：脸扁
+W：吃军粮
+E：Nuko
+
+按键表情效果：
+Z；头盔显隐
+X：Nuko
+C：脸红
+V：枪

@@ -1,0 +1,10 @@
+{
+  "title": "相册",
+  "description": "平时随手拍的相片",
+  "date": "2025-12-06",
+  "location": "广州",
+  "tags": ["风景"],
+  "layout": "masonry",
+  "columns": 3,
+  "hidden": false
+}
