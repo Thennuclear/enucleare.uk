@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Mizuki 文章管理台</title>
+		<link
+			rel="icon"
+			href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9D%3C/text%3E%3C/svg%3E"
+		/>
+		<link rel="stylesheet" href="/style.css" />
+	</head>
+	<body>
+		<div class="app">
+			<!-- ============================ 侧栏 ============================ -->
+			<aside class="sidebar">
+				<div class="sidebar-head">
+					<div class="brand">
+						<span class="brand-mark">📝</span>
+						<span class="brand-text">文章管理台</span>
+					</div>
+					<button id="btnNew" class="btn btn-primary btn-sm" title="新建文章 (Ctrl+N)">
+						＋ 新建
+					</button>
+				</div>
+
+				<div class="sidebar-tools">
+					<div class="search-wrap">
+						<span class="search-icon">🔍</span>
+						<input id="search" type="search" placeholder="搜索标题、标签、分类 (Ctrl+K)" autocomplete="off" />
+					</div>
+
+					<div class="filter-row">
+						<div class="chips" id="filterChips">
+							<button class="chip active" data-filter="all">全部</button>
+							<button class="chip" data-filter="published">已发布</button>
+							<button class="chip" data-filter="draft">草稿</button>
+							<button class="chip" data-filter="pinned">置顶</button>
+						</div>
+					</div>
+
+					<div class="sort-row">
+						<label for="sort">排序</label>
+						<select id="sort">
+							<option value="published-desc">发布日期 ↓</option>
+							<option value="published-asc">发布日期 ↑</option>
+							<option value="updated-desc">修改时间 ↓</option>
+							<option value="title-asc">标题 A→Z</option>
+							<option value="words-desc">字数 ↓</option>
+						</select>
+					</div>
+				</div>
+
+				<ul class="post-list" id="postList"></ul>
+
+				<div class="sidebar-foot">
+					<span id="statText" class="stat-text">加载中…</span>
+					<div class="foot-actions">
+						<button id="btnTrash" class="btn btn-ghost btn-xs" title="回收站">🗑 回收站</button>
+						<button id="btnReload" class="btn btn-ghost btn-xs" title="重新加载列表">⟳ 刷新</button>
+					</div>
+				</div>
+			</aside>
+
+			<!-- ============================ 主区 ============================ -->
+			<main class="main">
+				<div class="empty-state" id="emptyState">
+					<div class="empty-icon">🪶</div>
+					<h2>选择一篇文章开始编辑</h2>
+					<p>从左侧列表中选择，或点击「＋ 新建」创建新文章。</p>
+					<button class="btn btn-primary" id="btnNewEmpty">＋ 新建文章</button>
+				</div>
+
+				<form class="editor" id="editorForm" hidden autocomplete="off">
+					<div class="editor-head">
+						<div class="title-wrap">
+							<input id="fieldTitle" class="title-input" placeholder="文章标题" />
+							<div class="title-meta">
+								<code id="postPath" class="path-chip"></code>
+								<a id="postLink" class="link-chip" target="_blank" rel="noopener" hidden>打开站点 →</a>
+							</div>
+						</div>
+						<div class="head-actions">
+							<span class="dirty-dot" id="dirtyDot" title="有未保存的修改" hidden>●</span>
+							<button type="button" class="btn btn-ghost btn-sm" id="btnOpenSite">预览</button>
+							<button type="button" class="btn btn-primary btn-sm" id="btnSave" title="保存 (Ctrl+S)">
+								保存
+							</button>
+							<div class="menu-wrap">
+								<button type="button" class="btn btn-ghost btn-sm" id="btnMore">⋯</button>
+								<div class="menu" id="moreMenu" hidden>
+									<button type="button" data-action="duplicate">复制为新文章</button>
+									<button type="button" data-action="toggle-draft">切换草稿状态</button>
+									<button type="button" data-action="open-folder">在资源管理器中显示</button>
+									<hr />
+									<button type="button" class="danger" data-action="delete">移入回收站</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="editor-body">
+						<!-- 属性区 -->
+						<section class="panel" id="metaPanel">
+							<div class="panel-head">
+								<h3>属性</h3>
+								<button type="button" class="btn btn-ghost btn-xs" id="btnToggleAdvanced">
+									高级字段 ▾
+								</button>
+							</div>
+							<div class="field-grid" id="basicFields"></div>
+							<div class="field-grid advanced" id="advancedFields" hidden></div>
+						</section>
+
+						<!-- 正文区 -->
+						<section class="panel body-panel">
+							<div class="panel-head">
+								<h3>正文</h3>
+								<div class="view-tabs" id="viewTabs">
+									<button type="button" class="tab active" data-view="split">并排</button>
+									<button type="button" class="tab" data-view="edit">仅编辑</button>
+									<button type="button" class="tab" data-view="preview">仅预览</button>
+								</div>
+							</div>
+							<div class="split split" id="splitView">
+								<div class="pane pane-edit">
+									<div class="pane-head">
+										<span>Markdown</span>
+										<span class="pane-hint" id="bodyStats">0 字</span>
+									</div>
+									<textarea id="bodyInput" spellcheck="false" placeholder="在这里书写正文，可直接粘贴或拖入图片…"></textarea>
+								</div>
+								<div class="pane pane-preview">
+									<div class="pane-head">
+										<span>预览</span>
+										<span class="pane-hint">近似效果</span>
+									</div>
+									<div class="preview" id="bodyPreview"></div>
+								</div>
+							</div>
+							<div class="drop-hint" id="dropHint" hidden>松开以上传图片 ⬇</div>
+						</section>
+
+						<!-- 附件区 -->
+						<section class="panel" id="assetsPanel">
+							<div class="panel-head">
+								<h3>图片 / 附件</h3>
+								<label class="btn btn-ghost btn-xs">
+									＋ 上传图片
+									<input type="file" id="fileInput" accept="image/*" multiple hidden />
+								</label>
+							</div>
+							<div class="asset-list" id="assetList"></div>
+						</section>
+					</div>
+				</form>
+			</main>
+		</div>
+
+		<!-- ============================ 弹窗 ============================ -->
+		<div class="modal-backdrop" id="createModal" hidden>
+			<div class="modal">
+				<div class="modal-head">
+					<h3>新建文章</h3>
+					<button class="icon-btn" data-close="createModal">✕</button>
+				</div>
+				<div class="modal-body">
+					<label class="form-row">
+						<span>标题 <em>*</em></span>
+						<input id="newTitle" placeholder="例如：我的第一篇文章" />
+					</label>
+					<label class="form-row">
+						<span>文件名 (slug)</span>
+						<input id="newSlug" placeholder="留空则根据标题自动生成" />
+					</label>
+					<div class="form-grid">
+						<label class="form-row">
+							<span>发布日期</span>
+							<input id="newDate" type="date" />
+						</label>
+						<label class="form-row">
+							<span>分类</span>
+							<input id="newCategory" list="categoryOptions" placeholder="可选" />
+						</label>
+					</div>
+					<label class="form-row">
+						<span>标签</span>
+						<input id="newTags" placeholder="逗号分隔，例如：杂物间, 开发" />
+					</label>
+					<div class="form-check-row">
+						<label class="switch-row">
+							<input type="checkbox" id="newDraft" />
+							<span>创建为草稿</span>
+						</label>
+						<label class="switch-row">
+							<input type="checkbox" id="newFolder" />
+							<span>使用文件夹（便于附带图片）</span>
+						</label>
+					</div>
+					<p class="modal-tip" id="newPreviewPath"></p>
+				</div>
+				<div class="modal-foot">
+					<button class="btn btn-ghost" data-close="createModal">取消</button>
+					<button class="btn btn-primary" id="btnCreateConfirm">创建并编辑</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal-backdrop" id="trashModal" hidden>
+			<div class="modal modal-wide">
+				<div class="modal-head">
+					<h3>回收站</h3>
+					<button class="icon-btn" data-close="trashModal">✕</button>
+				</div>
+				<div class="modal-body" id="trashBody"></div>
+				<div class="modal-foot">
+					<button class="btn btn-ghost" data-close="trashModal">关闭</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal-backdrop" id="confirmModal" hidden>
+			<div class="modal modal-sm">
+				<div class="modal-head">
+					<h3 id="confirmTitle">确认</h3>
+					<button class="icon-btn" data-close="confirmModal">✕</button>
+				</div>
+				<div class="modal-body">
+					<p id="confirmText" class="confirm-text"></p>
+				</div>
+				<div class="modal-foot">
+					<button class="btn btn-ghost" data-close="confirmModal">取消</button>
+					<button class="btn btn-danger" id="confirmOk">确定</button>
+				</div>
+			</div>
+		</div>
+
+		<datalist id="categoryOptions"></datalist>
+		<datalist id="tagOptions"></datalist>
+		<div class="toast-stack" id="toastStack"></div>
+
+		<script type="module" src="/app.js"></script>
+	</body>
+</html>

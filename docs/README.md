@@ -18,8 +18,16 @@
 - **[../README.ja.md](../README.ja.md)** - 日本語  
 - **[../README.tw.md](../README.tw.md)** - 繁體中文
 
-### 内容分离相关
+### 内容管理工具
 
+- **[POSTS_ADMIN.md](./POSTS_ADMIN.md)** - 文章管理台（本地 Web GUI）⭐
+  - `pnpm admin` 一键启动
+  - 文章列表 / 搜索 / 筛选 / 排序
+  - 可视化修改 frontmatter 属性
+  - 快速新建文章、正文编辑与实时预览
+  - 图片上传、封面设置、回收站恢复
+
+### 内容分离相关
 - **[CONTENT_SEPARATION.md](./CONTENT_SEPARATION.md)** - 内容分离完整指南 ⭐
   - ENABLE_CONTENT_SYNC 控制开关
   - 环境变量配置详解
@@ -57,6 +65,9 @@
 ### 我想部署博客
 → 阅读 [部署指南](./DEPLOYMENT.md)
 
+### 我想写文章 / 管理已有文章
+→ 运行 `pnpm admin`，详见 [文章管理台](./POSTS_ADMIN.md)
+
 ### 我想使用内容分离功能
 → 阅读 [内容分离完整指南](./CONTENT_SEPARATION.md)
 
@@ -80,6 +91,7 @@
 ```
 docs/
 ├── README.md                    # 本文档 - 索引导航
+├── POSTS_ADMIN.md               # 文章管理台使用说明
 ├── CONTENT_SEPARATION.md        # 内容分离核心指南
 ├── CONTENT_REPOSITORY.md        # 内容仓库结构
 ├── MIGRATION_GUIDE.md           # 迁移指南

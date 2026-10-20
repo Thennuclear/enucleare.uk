@@ -52,3 +52,6 @@ src/data/bilibili-data.json
 
 # Lighthouse CI
 .lighthouseci/
+
+# 文章管理台回收站与备份
+src/content/.trash/
